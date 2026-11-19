@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#101b18">
+<title>ANG LINGGANA — AI Video Prompt Generator</title>
+<style>
+:root{--bg:#0b1210;--panel:#14211d;--panel2:#1b2b25;--gold:#d7b46a;--cream:#f3f0e7;--muted:#aab8af;--line:#30443a;--green:#7dc59b}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(160deg,#0b1210,#101c17 55%,#0b1210);color:var(--cream);font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+header{padding:25px 18px 20px;text-align:center;border-bottom:1px solid var(--line);background:radial-gradient(ellipse at top,#263b30 0%,transparent 70%)}
+.brand{font-size:12px;letter-spacing:.28em;color:var(--gold);font-weight:800}.logo{font-size:clamp(27px,7vw,42px);line-height:1.05;font-weight:900;letter-spacing:.04em;margin:8px 0}.sub{color:var(--muted);font-size:12px;letter-spacing:.12em}
+main{max-width:850px;margin:auto;padding:16px 13px 48px}.card{background:rgba(20,33,29,.96);border:1px solid var(--line);border-radius:17px;padding:16px;margin:13px 0;box-shadow:0 8px 24px #0003}
+h2{font-size:16px;margin:0 0 12px;color:var(--gold)}h3{font-size:14px;margin:0 0 8px}
+label{display:block;font-size:13px;color:#dce5de;margin:10px 0 5px}input,select,textarea{width:100%;background:#0d1713;border:1px solid #385044;border-radius:10px;color:var(--cream);padding:12px;font:inherit;outline:none}textarea{min-height:92px;resize:vertical}input:focus,select:focus,textarea:focus{border-color:var(--gold)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.filebox{border:1px dashed #577060;border-radius:12px;padding:12px;background:#0d1713}.filebox input{padding:8px;border:0;background:transparent}.preview{width:100%;max-height:260px;object-fit:contain;border-radius:10px;background:#050807;margin-top:8px;display:none}
+.pill{display:inline-block;border:1px solid var(--line);padding:4px 9px;border-radius:99px;color:var(--green);font-size:11px;margin:2px}
+button{border:0;border-radius:11px;padding:12px 15px;font-weight:800;font-size:14px;cursor:pointer}
+.primary{background:var(--gold);color:#1b1a13;width:100%;margin-top:13px}.secondary{background:#263b30;color:var(--cream);border:1px solid #496252}.copy{background:#d7b46a;color:#1b1a13;padding:9px 12px}.download{background:#263b30;color:var(--cream);border:1px solid #496252;width:100%;margin-top:10px}
+.note{font-size:12px;color:var(--muted)}.status{font-size:12px;color:var(--green);margin-top:7px;min-height:18px}
+.output{display:none}.part{background:#0d1713;border:1px solid var(--line);border-radius:12px;padding:12px;margin:12px 0}.parthead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}.part pre{white-space:pre-wrap;overflow-wrap:anywhere;color:#e6ece7;font:12px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace;margin:0}
+footer{text-align:center;color:#75877c;font-size:11px;padding:18px}
+@media(max-width:520px){.grid{grid-template-columns:1fr}.card{padding:14px}.parthead{align-items:flex-start}}
+</style>
+</head>
+<body>
+<header>
+ <div class="brand">AI CREATIVE WORKSPACE</div>
+ <div class="logo">ANG LINGGANA</div>
+ <div class="sub">AI VIDEO PROMPT GENERATOR</div>
+ <div style="margin-top:12px"><span class="pill">AUTO WORKFLOW</span><span class="pill">SEEDANCE 2.0</span><span class="pill">SEEDANCE 2.5</span></div>
+</header>
+<main>
+ <section class="card">
+  <h2>01 · REFERENSI VIDEO</h2>
+  <div class="filebox"><label for="video">Upload video referensi (MP4, MOV, WebM)</label><input id="video" type="file" accept="video/*"><video id="videoPreview" class="preview" controls playsinline></video><div id="videoInfo" class="status">Belum ada video dipilih.</div></div>
+  <div class="filebox" style="margin-top:10px"><label for="character">Upload character sheet (opsional)</label><input id="character" type="file" accept="image/*"><img id="charPreview" class="preview" alt="Pratinjau character sheet"><div id="charInfo" class="status">Belum ada character sheet.</div></div>
+  <p class="note">Mode otomatis pada versi ini membaca metadata video (durasi dan resolusi) serta memakai arahan adegan yang kamu masukkan. Analisis visual AI penuh memerlukan layanan/backend AI yang terhubung.</p>
+ </section>
+ <section class="card">
+  <h2>02 · PENGATURAN GENERATOR</h2>
+  <div class="grid">
+   <div><label for="model">Model target</label><select id="model"><option value="both">Seedance 2.0 + 2.5</option><option>Seedance 2.0</option><option>Seedance 2.5</option></select></div>
+   <div><label for="duration">Durasi output</label><select id="duration"><option value="10">10 detik</option><option value="15">15 detik</option><option value="30" selected>30 detik</option><option value="60">60 detik</option><option value="source">Ikuti durasi video</option></select></div>
+   <div><label for="ratio">Rasio</label><select id="ratio"><option>9:16</option><option>16:9</option><option>1:1</option><option>4:5</option></select></div>
+   <div><label for="fps">Frame rate</label><select id="fps"><option>24 FPS</option><option selected>30 FPS</option><option>60 FPS</option><option>120 FPS</option></select></div>
+   <div><label for="genre">Genre</label><select id="genre"><option>Martial Arts / Action</option><option>Pencak Silat Nusantara</option><option>MMA / Street Fight</option><option>Fantasy Martial Arts</option><option>Historical / Royal Battle</option><option>Supernatural Action</option></select></div>
+   <div><label for="style">Gaya visual</label><select id="style"><option>Ultra-realistic cinematic live-action</option><option>Photorealistic Hollywood action</option><option>Gritty realistic action film</option><option>Epic fantasy cinematic</option></select></div>
+  </div>
+  <label for="mainchar">Karakter utama / penggantian karakter</label><input id="mainchar" placeholder="Contoh: ganti hanya karakter utama sesuai character sheet">
+  <label for="opponents">Karakter lawan dan jumlahnya</label><input id="opponents" placeholder="Contoh: 6 preman berpakaian hitam, pertahankan semuanya">
+  <label for="location">Lokasi / arena</label><input id="location" placeholder="Contoh: padang rumput kering, langit terbuka">
+  <label for="action">Ringkasan adegan atau aksi yang terlihat</label><textarea id="action" placeholder="Tuliskan urutan gerakan yang ingin dipertahankan. Contoh: lawan mengepung, pendekar menghindar, melakukan serangan balasan, beberapa lawan terpental..."></textarea>
+  <label for="locks">Prioritas penguncian (opsional)</label><input id="locks" value="Character Lock, Arena Lock, Camera Lock, Action Order Lock, No Identity Drift">
+  <button class="primary" id="generate">GENERATE PROMPT</button>
+  <div class="status" id="status" aria-live="polite"></div>
+ </section>
+ <section class="card output" id="results">
+  <h2>03 · HASIL PROMPT</h2>
+  <div class="note" id="resultMeta"></div>
+  <div id="parts"></div>
+  <button class="download" id="download">DOWNLOAD SEMUA PROMPT (.TXT)</button>
+ </section>
+ <footer>ANG LINGGANA · AI VIDEO PROMPT GENERATOR<br>Prototype lokal untuk browser Android</footer>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+let videoDuration=null, generated=[];
+function formatTime(s){if(!Number.isFinite(s))return 'tidak diketahui';return `${Math.floor(s/60)}m ${Math.round(s%60)}d`;}
+$('video').addEventListener('change',e=>{
+ const f=e.target.files[0]; if(!f)return;
+ const url=URL.createObjectURL(f);$('videoPreview').src=url;$('videoPreview').style.display='block';
+ $('videoInfo').textContent=`${f.name} · ${(f.size/1048576).toFixed(1)} MB · membaca metadata...`;
+ $('videoPreview').onloadedmetadata=()=>{videoDuration=$('videoPreview').duration;$('videoInfo').textContent=`${f.name} · ${formatTime(videoDuration)} · ${$('videoPreview').videoWidth}×${$('videoPreview').videoHeight}`;};
+});
+$('character').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;$('charPreview').src=URL.createObjectURL(f);$('charPreview').style.display='block';$('charInfo').textContent=f.name;});
+function buildPrompt(part,total,seconds,model){
+ const modelLine=model==='both'?'TARGET MODEL: Create compatible prompt versions for Seedance 2.0 and Seedance 2.5.':`TARGET MODEL: ${model}.`;
+ const main=$('mainchar').value.trim()||'Gunakan karakter utama dari video referensi; jika character sheet diunggah, jadikan character sheet sebagai acuan identitas utama.';
+ const opp=$('opponents').value.trim()||'Pertahankan seluruh karakter lawan yang terlihat dalam video referensi, termasuk jumlah, pakaian, posisi, dan reaksinya.';
+ const loc=$('location').value.trim()||'Pertahankan lokasi, latar, properti, cuaca, dan pencahayaan dari video referensi.';
+ const action=$('action').value.trim()||'Rekonstruksi aksi yang benar-benar terlihat pada video referensi. Jangan menambahkan koreografi baru.';
+ const lock=$('locks').value.trim()||'Character Lock, Arena Lock, Camera Lock, Action Order Lock.';
+ return `ANG LINGGANA — VIDEO-TO-VIDEO MASTER PROMPT
+PART ${part} OF ${total}
+
+DURATION: EXACTLY ${seconds} SECONDS
+ASPECT RATIO: ${$('ratio').value} ${$('ratio').value==='9:16'?'VERTICAL':''}
+FRAME RATE: ${$('fps').value}
+VISUAL QUALITY: ${$('style').value}, cinematic 4K/8K look
+GENRE: ${$('genre').value}
+${modelLine}
+
+MASTER REFERENCE:
+Use @1 as the MASTER VIDEO REFERENCE. Reconstruct the source video as faithfully as possible. Preserve the original choreography, action order, timing, body mechanics, movement direction, spacing, blocking, reactions, camera movement, framing, composition, editing rhythm, lighting, environment, and props.
+
+CHARACTER REPLACEMENT:
+${main}
+${$('character').files[0]?'Use @2 as the character sheet reference. Preserve face, hairstyle, skin appearance, body proportions, costume, colors, accessories, and visual identity consistently.':'No character sheet supplied. Preserve the original character identity unless the description above specifies a replacement.'}
+
+OPPONENT LOCK:
+${opp}
+
+ARENA LOCK:
+${loc}
+
+ACTION RECONSTRUCTION:
+${action}
+For this part, continue the action naturally from the preceding part when applicable. Keep all movements grounded in the reference. Do not invent extra attacks, reactions, characters, or transitions.
+
+CAMERA & CINEMATOGRAPHY:
+Preserve the reference camera language, shot size, camera angle, camera distance, movement, subject placement, and visual continuity. Keep important full-body action visible and avoid unnecessary cuts.
+
+CONSISTENCY LOCKS:
+${lock}
+No identity drift. No costume changes. No arena changes. No opponent substitutions. No altered action order. No random choreography. Maintain realistic anatomy, contact, weight, gravity, and natural motion.
+
+NEGATIVE PROMPT:
+cartoon style, game CGI look, plastic skin, distorted anatomy, extra limbs, duplicated characters, disappearing opponents, identity drift, costume drift, location drift, random choreography, incorrect action order, unnatural floating, weightless impacts, excessive motion blur, shaky unreadable framing, unwanted slow motion, text, watermark.
+
+FINAL INSTRUCTION:
+The uploaded reference video is the authority for visual and action continuity. Reproduce what is present; do not redesign the scene. Change only the explicitly requested character elements while preserving all other reference details.`;
+}
+$('generate').addEventListener('click',()=>{
+ const choice=$('duration').value;
+ const duration=choice==='source'?(videoDuration?Math.max(1,Math.round(videoDuration)):30):Number(choice);
+ if(choice==='source'&&!videoDuration){$('status').textContent='Upload video terlebih dahulu agar durasi sumber dapat dibaca.';return;}
+ const total=Math.ceil(duration/10);generated=[];
+ for(let i=0;i<total;i++){const secs=Math.min(10,duration-i*10);generated.push(buildPrompt(i+1,total,secs,$('model').value));}
+ $('parts').innerHTML='';
+ generated.forEach((p,i)=>{const box=document.createElement('div');box.className='part';const head=document.createElement('div');head.className='parthead';const title=document.createElement('h3');title.textContent=`PART ${i+1} · ${Math.min(10,duration-i*10)} DETIK`;const btn=document.createElement('button');btn.className='copy';btn.textContent='COPY';btn.onclick=async()=>{try{await navigator.clipboard.writeText(p);btn.textContent='TERSALIN ✓';setTimeout(()=>btn.textContent='COPY',1400);}catch(e){const t=document.createElement('textarea');t.value=p;document.body.appendChild(t);t.select();document.execCommand('copy');t.remove();btn.textContent='TERSALIN ✓';}};head.append(title,btn);const pre=document.createElement('pre');pre.textContent=p;box.append(head,pre);$('parts').append(box);});
+ $('resultMeta').textContent=`${duration} detik · ${total} part · ${$('model').value==='both'?'Seedance 2.0 + 2.5':$('model').value}`;
+ $('results').style.display='block';$('status').textContent='Prompt berhasil dibuat. Periksa hasil dan salin setiap part.';$('results').scrollIntoView({behavior:'smooth'});
+});
+$('download').addEventListener('click',()=>{const blob=new Blob([generated.join('\n\n'+'='.repeat(60)+'\n\n')],{type:'text/plain;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='ANG-LINGGANA-PROMPTS.txt';a.click();URL.revokeObjectURL(a.href);});
+</script>
+</body></html>
